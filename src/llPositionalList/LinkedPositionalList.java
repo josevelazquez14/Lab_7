@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+
 import interfaces.PLIteratorMaker;
 import interfaces.Position;
 import interfaces.PositionalList;
@@ -234,24 +235,33 @@ public class LinkedPositionalList<E> implements PositionalList<E> {
 	}
 	
 	private class PositionalListElementsBackwardIterator implements Iterator<E>{
-		Iterator<Position<E>> posIterator = 
-				new PositionIterator(); 
+		DNode<E> current = trailer;
+		
 		@Override
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
-			return posIterator.hasNext();
+			return current.getPrev() !=null;
 		}
 
 		@Override
 		public E next() {
 			if (!hasNext())
 				throw new NoSuchElementException("No more elements."); 
-			return posIterator.next().getElement();
+			return current.getPrev().getElement();
 		}
 		
 		
 		public void remove() throws IllegalStateException { 
-			posIterator.remove();
+			if(current == null)
+				throw new IllegalStateException("Illegal state argument");
+			else {
+				DNode<E> temp = current;
+				temp.getNext().setPrev(temp.getPrev());
+				temp.getPrev().setNext(temp.getNext());
+				temp.setNext(null);
+				temp.setPrev(null);
+				temp.setElement(null);
+			}
 		}
 		
 		
